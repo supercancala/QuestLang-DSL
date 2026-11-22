@@ -1,0 +1,86 @@
+/*
+    QuestLang grammar (textX)
+    -------------------------
+    A declarative DSL for branching text adventures.
+
+    This file mirrors the BNF in "Concrete Syntax for QuestLang" (section 4):
+
+        <adventure>    -> Adventure <title> : NL INDENT <start_clause> DEDENT <scenes>
+        <start_clause> -> Begin at <scene_ref> . NL
+        <scene>        -> Scene <scene_id> : NL INDENT <passages> <exit> DEDENT
+        <passage>      -> Narrate <text> NL
+        <exit>         -> <choice_block> | <jump> | <conclusion>
+        <choice>       -> Option <label> leads to <scene_ref> . NL
+        <jump>         -> Proceed to <scene_ref> . NL
+        <conclusion>   -> Conclude . NL
+
+    textX (a PEG parser) skips whitespace and newlines between tokens, so the
+    layout rules of the language (NL, INDENT, DEDENT: one statement per line,
+    four-space indentation, no tabs) are checked by questlang/layout.py
+    before this grammar runs. Everything else is enforced here.
+
+    Scene references ([Scene:SceneID]) are real textX cross-references: a
+    scene may be referenced before it is declared (forward references), and
+    a reference to an undeclared scene is reported as an error.
+*/
+
+Adventure:
+    'Adventure' title=QuotedText ':'
+        start=StartClause
+    scenes+=Scene
+;
+
+StartClause:
+    'Begin' 'at' target=[Scene:SceneID] '.'
+;
+
+Scene:
+    'Scene' name=SceneID ':'
+        passages*=Passage
+        exit=Exit
+;
+
+Passage:
+    'Narrate' text=QuotedText
+;
+
+// A scene ends with exactly one exit form. The alternatives are mutually
+// exclusive, so mixing Option with Proceed or Conclude is a syntax error.
+Exit:
+    ChoiceBlock | Jump | Conclusion
+;
+
+ChoiceBlock:
+    choices+=Choice
+;
+
+Choice:
+    'Option' label=QuotedText 'leads' 'to' target=[Scene:SceneID] '.'
+;
+
+Jump:
+    'Proceed' 'to' target=[Scene:SceneID] '.'
+;
+
+Conclusion:
+    keyword='Conclude' '.'
+;
+
+// ---------------------------------------------------------------- lexical --
+
+// A letter or underscore followed by letters, digits or underscores
+// (English letters only, case-sensitive). It may not spell a keyword,
+// or the runtime word Restart, in any capitalization.
+SceneID:
+    !Reserved /[A-Za-z_][A-Za-z0-9_]*/
+;
+
+Reserved:
+    /(?i:adventure|begin|at|scene|narrate|option|leads|to|proceed|conclude|restart)(?![A-Za-z0-9_])/
+;
+
+// Text between double quotes on a single line. A quote inside the text is
+// written \" and a backslash is written \\ (unescaped by the parser).
+QuotedText:
+    /"(?:\\["\\]|[^"\\\r\n])*"/
+;

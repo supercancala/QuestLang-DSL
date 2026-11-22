@@ -1,0 +1,28 @@
+Adventure "The Lost Crypt":
+    Begin at ChamberOfEchoes.
+
+Scene ChamberOfEchoes:
+    Narrate "The entrance collapses behind you in a storm of ancient dust."
+    Narrate "Faint light glints from a pedestal holding a brass key."
+    Option "Take the brass key and descend into the deep vault" leads to Vault.
+    Option "Examine the carvings along the damp stone wall" leads to WallMurals.
+
+Scene WallMurals:
+    Narrate "The murals depict a forgotten king sealing an eldritch gate."
+    Narrate "A secret latch clicks as you touch the king's crown."
+    Proceed to Vault.
+
+Scene Vault:
+    Narrate "You step onto a marble balcony overlooking an underground lake."
+    Option "Board the tethered ferry to reach the far bank" leads to FarBank.
+    Option "Return to the Chamber of Echoes" leads to ChamberOfEchoes.
+
+Scene FarBank:
+    Narrate "The ferry glides across the motionless black water."
+    Narrate "You step onto dry land and see daylight shimmering ahead."
+    Conclude.
+
+Scene SecretObservatory:
+    Narrate "This hidden chamber looks out over the abyss."
+    Narrate "No option leads here, so the checker reports it as unreachable."
+    Conclude.

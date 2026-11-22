@@ -1,0 +1,50 @@
+Adventure "The mysterious town":
+    Begin at Entrance.
+
+Scene Entrance:
+    Narrate "Your car is out of gasoline outside a small, foggy town."
+    Narrate "You need fuel or a place to spend the night."
+    Option "Enter the town and ask for help" leads to TheTown.
+    Option "Look for another route through the forest" leads to FoggyForest.
+
+Scene TheTown:
+    Narrate "A sign points to a garage. An inn is still open nearby."
+    Option "Ask the mechanic for fuel" leads to Garage.
+    Option "Spend the night at the inn" leads to Inn.
+    Option "Return to your car" leads to Entrance.
+
+Scene Garage:
+    Narrate "The mechanic fills a fuel can and walks back with you."
+    Proceed to RoadHome.
+
+Scene RoadHome:
+    Narrate "You refuel your car and leave the mysterious town behind."
+    Narrate "Ending: Back on the road."
+    Conclude.
+
+Scene Inn:
+    Narrate "The innkeeper offers you a room for the night."
+    Narrate "You decide to wait until daylight to continue your journey."
+    Narrate "Ending: A night in town."
+    Conclude.
+
+Scene FoggyForest:
+    Narrate "The path divides beside an old signpost."
+    Narrate "One trail follows a road; the other reaches a clearing."
+    Option "Follow the old road" leads to OldRoad.
+    Option "Explore the clearing" leads to Clearing.
+    Option "Return to your car" leads to Entrance.
+
+Scene OldRoad:
+    Narrate "You follow the road and recognize the lights of the town."
+    Proceed to TheTown.
+
+Scene Clearing:
+    Narrate "A park ranger waves from a cabin at the edge of the trees."
+    Option "Ask the ranger for shelter" leads to Cabin.
+    Option "Go back to the forest path" leads to FoggyForest.
+
+Scene Cabin:
+    Narrate "The ranger offers shelter and calls for help at dawn."
+    Narrate "Ending: Shelter in the forest."
+    Conclude.

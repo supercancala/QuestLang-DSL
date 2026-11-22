@@ -1,0 +1,29 @@
+Adventure "A Broken Story (for testing the checker)":
+    Begin at Arrival.
+
+Scene Arrival:
+    Narrate "Every problem in this file is deliberate."
+    Option "Go to the town" leads to TheTown.
+    Option "Go to the forest" leads to Forest.
+    Option "Enter the maze" leads to Maze.
+
+Scene TheTown:
+    Narrate "The town square is empty."
+    Option "Back to the start" leads to Entrance.
+
+Scene Forest:
+    Narrate "Trees in every direction."
+    Conclude.
+
+Scene Forest:
+    Narrate "A second scene with the same name."
+    Conclude.
+
+Scene Maze:
+    Narrate "The walls all look the same."
+    Option "Turn left" leads to MazeCorner.
+    Option "Turn right" leads to MazeCorner.
+
+Scene MazeCorner:
+    Narrate "You are back where you started."
+    Proceed to Maze.

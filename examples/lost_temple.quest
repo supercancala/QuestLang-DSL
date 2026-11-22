@@ -1,0 +1,15 @@
+Adventure "The Lost Temple":
+    Begin at Entrance.
+
+Scene Entrance:
+    Narrate "You arrive at an ancient temple."
+    Option "Enter the temple" leads to Treasure.
+    Option "Return home" leads to Home.
+
+Scene Treasure:
+    Narrate "You discover a hidden treasure."
+    Conclude.
+
+Scene Home:
+    Narrate "You return home safely."
+    Conclude.
