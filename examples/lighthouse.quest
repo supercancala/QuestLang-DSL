@@ -1,0 +1,15 @@
+Adventure "The Lighthouse":
+    Begin at Dock.
+
+Scene Dock:
+    Narrate "You step onto the dock below the lighthouse."
+    Proceed to Tower.
+
+Scene Tower:
+    Narrate "The beacon is ready to light."
+    Option "Return to the dock" leads to Dock.
+    Option "Light the beacon" leads to BeaconLit.
+
+Scene BeaconLit:
+    Narrate "The beacon guides the ship safely toward shore."
+    Conclude.

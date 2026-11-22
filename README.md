@@ -107,3 +107,87 @@ npm run build
 # Run unit tests for Mock Language Engine
 npm test
 ```
+
+---
+
+## ⚙️ QuestLang Language Engine (Python + textX)
+
+The Studio's **API mode** is served by the real QuestLang engine in `questlang/`. It parses with a
+formal textX grammar (`questlang/grammar/questlang.tx`), runs static semantic checks, and exposes the
+same play-session runtime to a terminal CLI and to the Studio.
+
+```
+[ QuestLang Studio (React) ] ── POST /api/validate ──► [ questlang engine (Python) ]
+                                                         layout check → textX grammar → analyzer
+                                                         runtime Session · Graphviz DOT · CLI
+```
+
+### Setup
+
+```bash
+python -m venv .venv
+source .venv/bin/activate          # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
+
+### Connect the Studio to the engine
+
+```bash
+python -m questlang serve          # engine on http://localhost:3000
+npm run dev                        # Studio, in a second terminal
+```
+
+In the Studio, click the gear icon (**Story Engine Settings**), choose **Express API Mode**, keep the
+endpoint `http://localhost:3000/api/validate`, click **Ping Test**, then **Save Settings**. (The mode is
+named after the Express server first planned; the Python engine answers it.) Every check now runs on
+the textX engine; Story Preview Mode keeps working offline.
+
+### Command line
+
+```bash
+python -m questlang check examples/mysterious_town.quest   # errors and warnings, exit code 0/1
+python -m questlang play  examples/mysterious_town.quest   # play in the terminal (r = restart, q = quit)
+python -m questlang graph examples/mysterious_town.quest -o map.svg   # Graphviz story map (.dot needs no Graphviz)
+python -m pytest                                            # engine test suite
+```
+
+### Engine API
+
+| Endpoint | Body | Returns |
+|---|---|---|
+| `POST /api/validate` | `{source}` | `EngineResponse` (`src/types/questlang.ts`); each error also carries a `code` |
+| `POST /api/graph` | `{source}` | `{dot}` Graphviz story map |
+| `POST /api/session` | `{source}` | new play session: current scene, history, completed, options |
+| `POST /api/session/<id>/choose` | `{option}` (1-based) | updated session; invalid input → 400, state unchanged |
+| `POST /api/session/<id>/restart` | — | session back at the starting scene |
+| `GET /api/health` | — | `{status, engine, version}` |
+
+### Diagnostics
+
+| Code | Severity | Problem |
+|---|---|---|
+| QL101 | error | Tab character |
+| QL102 | error | Indentation not a multiple of four spaces |
+| QL103 | error | Statement at the wrong indentation level |
+| QL104 | error | More than one statement on a line |
+| QL201 | error | Syntax error (missing period, missing exit, mixed exits, …) |
+| QL202 | error | Keyword used as a scene name |
+| QL301 | error | Reference to an undeclared scene (with a "did you mean" hint) |
+| QL302 | error | Duplicate scene name |
+| QL403 | error | `Proceed` statements that loop forever |
+| QL401 | warning | Scene unreachable from the starting scene |
+| QL402 | warning | Dead end: no ending reachable from this scene |
+| QL404 | warning | Adventure has no `Conclude` |
+| QL405 | warning | Same option label twice in one scene |
+
+Errors block play; warnings do not.
+
+### Repository layout
+
+```
+src/                  QuestLang Studio (React + TypeScript + CodeMirror)
+questlang/            language engine: grammar, parser, analyzer, runtime, graph, CLI, API server
+  grammar/questlang.tx
+examples/             sample adventures (.quest), incl. a deliberately broken one
+tests/                pytest suite for the engine and its API
+```
